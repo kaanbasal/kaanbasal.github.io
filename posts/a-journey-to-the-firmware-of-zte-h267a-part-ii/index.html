@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>A Journey to the Firmware of ZTE H267A: Part II - Kaan Basal</title>
+        <meta name="Description" content="Kaan Basal Personal Software Blog"><meta property="og:title" content="A Journey to the Firmware of ZTE H267A: Part II" />
+<meta property="og:description" content="In the previous post, I explained how I&rsquo;ve got the proof that leads me to get the root password and the firmware of the ZTE H267A router. In this part of the series, I will explain the techniques I used and how I configured the environment. But before explaining the successful approach, I want to mention about failed ones briefly.
+The Failures At first, I tried the golang code here. Unfortunately, it didn&rsquo;t work well." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/" />
+<meta property="article:published_time" content="2020-05-04T04:24:01+03:00" />
+<meta property="article:modified_time" content="2020-05-04T04:24:01+03:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A Journey to the Firmware of ZTE H267A: Part II"/>
+<meta name="twitter:description" content="In the previous post, I explained how I&rsquo;ve got the proof that leads me to get the root password and the firmware of the ZTE H267A router. In this part of the series, I will explain the techniques I used and how I configured the environment. But before explaining the successful approach, I want to mention about failed ones briefly.
+The Failures At first, I tried the golang code here. Unfortunately, it didn&rsquo;t work well."/>
+<meta name="application-name" content="KaanB">
+<meta name="apple-mobile-web-app-title" content="KaanB"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="https://www.kaanbasal.net/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://www.kaanbasal.net/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://www.kaanbasal.net/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="https://www.kaanbasal.net/apple-touch-icon.png"><link rel="mask-icon" href="https://www.kaanbasal.net/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="https://www.kaanbasal.net/site.webmanifest"><link rel="canonical" href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/" /><link rel="prev" href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/" /><link rel="next" href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/" /><link rel="stylesheet" href="https://www.kaanbasal.net/lib/normalize/normalize.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/css/style.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "A Journey to the Firmware of ZTE H267A: Part II",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.kaanbasal.net\/posts\/a-journey-to-the-firmware-of-zte-h267a-part-ii\/"
+        },"genre": "posts","keywords": "superonline, firmware, iptables, mitm","wordcount":  883 ,
+        "url": "https:\/\/www.kaanbasal.net\/posts\/a-journey-to-the-firmware-of-zte-h267a-part-ii\/","datePublished": "2020-05-04T04:24:01+03:00","dateModified": "2020-05-04T04:24:01+03:00","author": {
+                "@type": "Person",
+                "name": "Kaan Basal"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="https://www.kaanbasal.net/" title="Kaan Basal"><span class="header-title-pre"><i class='fas fa-code-branch'></i>&nbsp;&nbsp;</span>Kaan Basal</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="https://www.kaanbasal.net/posts/"> Posts </a><a class="menu-item" href="https://www.kaanbasal.net/tags/"> Tags </a><a class="menu-item" href="https://www.kaanbasal.net/pages/about"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="https://www.kaanbasal.net/" title="Kaan Basal"><span class="header-title-pre"><i class='fas fa-code-branch'></i>&nbsp;&nbsp;</span>Kaan Basal</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="https://www.kaanbasal.net/posts/" title="">Posts</a><a class="menu-item" href="https://www.kaanbasal.net/tags/" title="">Tags</a><a class="menu-item" href="https://www.kaanbasal.net/pages/about" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><article class="page single"><h1 class="single-title animated flipInX">A Journey to the Firmware of ZTE H267A: Part II</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://www.kaanbasal.net" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Kaan Basal</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=04.05.2020>04.05.2020</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 883 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>5 min&nbsp;</div>
+        </div><div class="content" id="content"><p>In the <a href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/" rel="">previous post</a>, I explained how I&rsquo;ve got the proof that leads me to get the <strong>root password</strong> and the firmware of the <strong>ZTE H267A</strong> router.
+In this part of the series, I will explain the techniques I used and how I configured the environment.
+But before explaining the successful approach, I want to mention about failed ones briefly.</p>
+<h3 id="the-failures">The Failures</h3>
+<p>At first, I tried the golang code <a href="https://github.com/paddlesteamer/superonline_hg253s/blob/master/mitm/ISPeer.go" target="_blank" rel="noopener noreffer">here</a>.
+Unfortunately, it didn&rsquo;t work well.
+I saw lots of malformed, retransmitting, or dropped packets, and the router couldn&rsquo;t connect to the configuration server.</p>
+<p>As a second solution, I tried <code>iptables</code> to forward packets going through the bridged network.
+This way, I could be able to modify the response, but none of the packets forwarded to the proxy server.
+I thought, <em>how come iptables interact with a network interface without an IP assigned</em>.
+With that thought in mind, I assigned an IP address to the bridge interface, but this time, the router lost its connection to the internet.</p>
+<p>I don&rsquo;t have enough knowledge in this area, and my assumption might be wrong.
+But what I was sure is I needed to find another way to alter the response returning from the configuration server.</p>
+<h3 id="successful-technique">Successful Technique</h3>
+<p>After all of these failures, I wanted to mimic both the router and the ISP.
+So in this way, I could bind those mimicked connections on another network interface, and finally, I could use iptables in this scenario.</p>
+<figure><a class="lightgallery" href="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png" title="/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png" data-thumbnail="/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png" data-sub-html="<h2>Working Technique Chart</h2>">
+        <img
+            class="lazyload"
+            src="https://www.kaanbasal.net/svg/loading/normal.min.svg"
+            data-src="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png"
+            data-srcset="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png 1.5x, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png 2x"
+            data-sizes="auto"
+            alt="/a-journey-to-the-firmware-of-zte-h267a/working-technique-chart.png" />
+    </a><figcaption class="image-caption">Working Technique Chart</figcaption>
+    </figure>
+<div class="details admonition warning">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-exclamation-triangle fa-fw"></i>Remove the Bridge<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>If you create a bridge connection like I did in <a href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/" target="_blank" rel="noopener noreffer">previous post</a>, you need to remove it first.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># remove br0</span>
+$ brctl delbr br0
+</code></pre></td></tr></table>
+</div>
+</div></div>
+        </div>
+    </div>
+<h4 id="configuring-the-pppoe-server">Configuring the PPPoE Server</h4>
+<p>If we configure the PPPoE server, we can deceive the router to connect to our machine, instead of ISP.</p>
+<p>I installed ppp and required packages by running the below commands.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># install ppp, ppp-dev, pppoeconf, build-essential</span>
+$ apt install ppp ppp-dev pppoeconf build-essential
+<span class="c1"># download and install rp-pppoe</span>
+$ wget -O rp-pppoe.tar.gz https://dianne.skoll.ca/projects/rp-pppoe/download/rp-pppoe-3.13.tar.gz
+$ tar xvf rp-pppoe.tar.gz
+$ <span class="nb">cd</span> rp-pppoe-3.13/src
+$ ./configure
+$ make <span class="o">&amp;&amp;</span> make install
+<span class="c1"># this will ask a couple of questions but you can just press enter, for firewall question, you should type 0</span>
+$ pppoe-setup
+</code></pre></td></tr></table>
+</div>
+</div><p>The configuration of pppoe-server utility took me a while to understand.
+I tried with different configurations, watched the logs, fixed the problems, and eventually, I built the correct configuration.</p>
+<p><code>/etc/ppp/allip</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-txt" data-lang="txt">10.0.0.6-20
+</code></pre></td></tr></table>
+</div>
+</div><p><code>/etc/ppp/pppoe-server-options</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-txt" data-lang="txt">require-pap
+login
+lcp-echo-interval 10
+lcp-echo-failure 2
+ms-dns 8.8.8.8
+ms-dns 8.8.4.4
+netmask 255.255.255.0
+defaultroute
+noipdefault
+usepeerdns
+debug
+logfile /var/log/pppoe-server-log
+</code></pre></td></tr></table>
+</div>
+</div><p><code>/etc/ppp/pap-secrets</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-txt" data-lang="txt">fiber@fiber         *       fiber               *
+YOUR_USERNAME_HERE  *       YOUR_PASSWORD_HERE  *
+</code></pre></td></tr></table>
+</div>
+</div><p><a href="https://serverfault.com/questions/969645/pppoe-pap-authentication-failed-even-with-correct-password" target="_blank" rel="noopener noreffer">One of the interesting things</a> about pppoe-server is that it requires you to create a user on Ubuntu for each user you added in the <code>pap-secrets</code> file.
+Based on that information, I created <code>fiber@fiber</code> and <code>YOUR_USERNAME_HERE</code> users by running following command.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># create users defined under pap-secrets file</span>
+$ useradd fiber@fiber
+<span class="c1"># when it asks password type fiber</span>
+$ passwd fiber@fiber
+$ useradd YOUR_USERNAME_HERE
+<span class="c1"># when it asks password type YOUR_PASSWORD_HERE</span>
+$ passwd YOUR_USERNAME_HERE
+</code></pre></td></tr></table>
+</div>
+</div><p>Before going forward, I wanted to test if the router can connect to the PPPoE server.
+I run the command below to start the server, and to verify it, I opened the web interface of the router and checked if it has an IP like <code>10.0.0.X</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># start server with specified network interface</span>
+$ pppoe-server -C isp -L 10.0.0.1 -I YOUR_INTERFACE_NAME -F
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="configuring-the-pppoe-client-connection">Configuring the PPPoE Client Connection</h4>
+<div class="details admonition tip">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Confession<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">To be honest, this part might not be necessary at all.
+If you have an active internet connection, shared by other devices or wifi etc, you can assign that interface as a default route, and this way you won&rsquo;t need the second ethernet interface.</div>
+        </div>
+    </div>
+<p>To connect with the ISP over PPPoE, I used the built-in pppoe tool.
+So, after connecting the ethernet cable coming from the ISP, I executed <code>pppoeconf</code> first and followed the instructions.
+After configuration is done, I run <code>pon dsl-provider</code> to actually start the connection between my machine and the ISP.
+And to check if I really connected to the internet, I executed <code>ping</code>.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># run pppoe configuration and follow the instructions</span>
+$ pppoeconf
+<span class="c1"># start pppoe connection</span>
+$ pon dsl-provider
+<span class="c1"># check if we have internet connection</span>
+$ ping 8.8.8.8
+
+<span class="c1"># ping should print some values like this</span>
+<span class="c1"># 64 bytes from 8.8.8.8: icmp_seq=0 ttl=53 time=26.323 ms</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="connecting-pppoe-client-and-server">Connecting PPPoE Client and Server</h4>
+<p>To bridge the connections using <code>iptables</code>, I needed to find out which interface is created by <code>pppoe client</code>.
+To see the name of the interface, I checked by running <code>ifconfig</code>, and I saw that there were 2 connections like <code>ppp</code>.
+One of them was the <code>PPPoE Server</code> named <code>ppp0</code> and the other for <code>PPPoE Client</code> named <code>ppp1</code>.</p>
+<p>So, to be able to connect my router to internet, I needed <code>iptables</code> to forward all packets through <code>ppp1</code> interface, and I executed the following commands.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># enable forwarding</span>
+$ sysctl -w net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
+<span class="c1"># forward all packets through ppp1 interface</span>
+$ iptables -t nat -A POSTROUTING -o ppp1 -j MASQUERADE
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 04.05.2020</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="https://www.kaanbasal.net/tags/superonline/">superonline</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/firmware/">firmware</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/iptables/">iptables</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/mitm/">mitm</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://www.kaanbasal.net/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/" class="prev" rel="prev" title="A Journey to the Firmware of ZTE H267A: Part I"><i class="fas fa-angle-left fa-fw"></i>A Journey to the Firmware of ZTE H267A: Part I</a>
+            <a href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/" class="next" rel="next" title="A Journey to the Firmware of ZTE H267A: Part III">A Journey to the Firmware of ZTE H267A: Part III<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.5"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://www.kaanbasal.net" target="_blank">Kaan Basal</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://www.kaanbasal.net/lib/lightgallery/lightgallery.min.css"><style>.lg-toolbar .lg-icon::after { color: #999; }</style><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":20},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/js/theme.min.js"></script><script type="text/javascript">
+            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+            ga('create', 'UA-165782253-1',{ 'storage': 'none' });ga('set', 'anonymizeIp', true);ga('send', 'pageview');
+        </script><script type="text/javascript" src="https://www.google-analytics.com/analytics.js" async></script></body>
+</html>

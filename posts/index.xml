@@ -1,0 +1,32 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>All Posts - Kaan Basal</title>
+        <link>https://www.kaanbasal.net/posts/</link>
+        <description>All Posts | Kaan Basal</description>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><managingEditor>kaanbasal@outlook.com (Kaan Basal)</managingEditor>
+            <webMaster>kaanbasal@outlook.com (Kaan Basal)</webMaster><lastBuildDate>Wed, 06 May 2020 01:22:33 &#43;0300</lastBuildDate><atom:link href="https://www.kaanbasal.net/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>A Journey to the Firmware of ZTE H267A: Part III</title>
+    <link>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/</link>
+    <pubDate>Wed, 06 May 2020 01:22:33 &#43;0300</pubDate>
+    <author>Author</author>
+    <guid>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/</guid>
+    <description><![CDATA[Let&rsquo;s summarize all the information we have so far.
+ The router makes http requests http://acs.superonline.net:8015/cwmpWeb/WGCPEMgt to get configuration server URL In the response returned, we found https://acs.superonline.net/cwmpWeb/CPEMgt (port 443) as configuration server URL which force router to use TLS connection acs.superonline.net domain has another open port to use to access configuration server which is 8010 We have PPPoE Server named ppp0, PPPoE Client named ppp1, and we forwarded all the packets through ppp1 interface using iptables  With all these pieces of information collected, I was ready to start getting the data I needed in the first place.]]></description>
+</item><item>
+    <title>A Journey to the Firmware of ZTE H267A: Part II</title>
+    <link>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/</link>
+    <pubDate>Mon, 04 May 2020 04:24:01 &#43;0300</pubDate>
+    <author>Author</author>
+    <guid>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/</guid>
+    <description><![CDATA[In the previous post, I explained how I&rsquo;ve got the proof that leads me to get the root password and the firmware of the ZTE H267A router. In this part of the series, I will explain the techniques I used and how I configured the environment. But before explaining the successful approach, I want to mention about failed ones briefly.
+The Failures At first, I tried the golang code here. Unfortunately, it didn&rsquo;t work well.]]></description>
+</item><item>
+    <title>A Journey to the Firmware of ZTE H267A: Part I</title>
+    <link>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/</link>
+    <pubDate>Sun, 03 May 2020 02:57:09 &#43;0300</pubDate>
+    <author>Author</author>
+    <guid>https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-i/</guid>
+    <description><![CDATA[The Story A couple of months ago, I wanted to replace my ISP provided ZTE H267A router with Ubiquiti USG. I already knew from my past experiences that it would be easy to configure internet connection but, what I did not know was configuring IPTV alongside with internet connection is a hell of a thing.
+The problem here was the missing knowledge on my side. I did know my ISP username and password, but I had no clue about what are the configurations used for the IPTV part.]]></description>
+</item></channel>
+</rss>

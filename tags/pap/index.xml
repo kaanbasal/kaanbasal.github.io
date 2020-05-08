@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>pap - Tag - Kaan Basal</title>
+        <link>https://www.kaanbasal.net/tags/pap/</link>
+        <description>pap - Tag - Kaan Basal</description>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><managingEditor>kaanbasal@outlook.com (Kaan Basal)</managingEditor>
+            <webMaster>kaanbasal@outlook.com (Kaan Basal)</webMaster><lastBuildDate>Mon, 11 May 2020 10:20:32 &#43;0300</lastBuildDate><atom:link href="https://www.kaanbasal.net/tags/pap/" rel="self" type="application/rss+xml" /><item>
+    <title>Finding Pap Credentials and Root Password of Routers</title>
+    <link>https://www.kaanbasal.net/posts/finding-pap-credentials-and-root-password-of-routers/</link>
+    <pubDate>Mon, 11 May 2020 10:20:32 &#43;0300</pubDate>
+    <author>Author</author>
+    <guid>https://www.kaanbasal.net/posts/finding-pap-credentials-and-root-password-of-routers/</guid>
+    <description><![CDATA[In the previous post, I have explained how you can gather the root password of ZTE H267A router. It was not so easy to prepare the required environment and also not easy to follow each step. I&rsquo;ve got a couple of feedbacks and questions regarding the parameters used for pppoe-server and setting dsl-provider up and those questions also proved how hard it was to follow.
+Today, I finished developing my golang script that finds the PPP PAP credentials and also captures any response which contains given keywords.]]></description>
+</item></channel>
+</rss>

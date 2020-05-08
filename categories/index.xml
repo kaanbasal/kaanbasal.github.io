@@ -1,0 +1,8 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Categories - Category - Kaan Basal</title>
+        <link>https://www.kaanbasal.net/categories/</link>
+        <description>Categories - Category - Kaan Basal</description>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><managingEditor>kaanbasal@outlook.com (Kaan Basal)</managingEditor>
+            <webMaster>kaanbasal@outlook.com (Kaan Basal)</webMaster><atom:link href="https://www.kaanbasal.net/categories/" rel="self" type="application/rss+xml" /></channel>
+</rss>

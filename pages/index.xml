@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pages on Kaan Basal</title>
+    <link>https://www.kaanbasal.net/pages/</link>
+    <description>Recent content in Pages on Kaan Basal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>kaanbasal@outlook.com (Kaan Basal)</managingEditor>
+    <webMaster>kaanbasal@outlook.com (Kaan Basal)</webMaster>
+    <lastBuildDate>Thu, 07 May 2020 04:07:33 +0300</lastBuildDate><atom:link href="https://www.kaanbasal.net/pages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>https://www.kaanbasal.net/pages/about/</link>
+      <pubDate>Thu, 07 May 2020 04:07:33 +0300</pubDate>
+      <author>kaanbasal@outlook.com (Kaan Basal)</author>
+      <guid>https://www.kaanbasal.net/pages/about/</guid>
+      <description>I like designing stuff and making it alive. It might be a 3D printable object, things like wood &amp;amp; metal graving, or a software.
+If you would like to see more about the software part and what I have done so far, you can find my resume here.</description>
+    </item>
+    
+  </channel>
+</rss>

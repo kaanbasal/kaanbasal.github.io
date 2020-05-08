@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>A Journey to the Firmware of ZTE H267A: Part III - Kaan Basal</title>
+        <meta name="Description" content="Kaan Basal Personal Software Blog"><meta property="og:title" content="A Journey to the Firmware of ZTE H267A: Part III" />
+<meta property="og:description" content="Let&rsquo;s summarize all the information we have so far.
+ The router makes http requests http://acs.superonline.net:8015/cwmpWeb/WGCPEMgt to get configuration server URL In the response returned, we found https://acs.superonline.net/cwmpWeb/CPEMgt (port 443) as configuration server URL which force router to use TLS connection acs.superonline.net domain has another open port to use to access configuration server which is 8010 We have PPPoE Server named ppp0, PPPoE Client named ppp1, and we forwarded all the packets through ppp1 interface using iptables  With all these pieces of information collected, I was ready to start getting the data I needed in the first place." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/" />
+<meta property="article:published_time" content="2020-05-06T01:22:33+03:00" />
+<meta property="article:modified_time" content="2020-05-06T01:22:33+03:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A Journey to the Firmware of ZTE H267A: Part III"/>
+<meta name="twitter:description" content="Let&rsquo;s summarize all the information we have so far.
+ The router makes http requests http://acs.superonline.net:8015/cwmpWeb/WGCPEMgt to get configuration server URL In the response returned, we found https://acs.superonline.net/cwmpWeb/CPEMgt (port 443) as configuration server URL which force router to use TLS connection acs.superonline.net domain has another open port to use to access configuration server which is 8010 We have PPPoE Server named ppp0, PPPoE Client named ppp1, and we forwarded all the packets through ppp1 interface using iptables  With all these pieces of information collected, I was ready to start getting the data I needed in the first place."/>
+<meta name="application-name" content="KaanB">
+<meta name="apple-mobile-web-app-title" content="KaanB"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="https://www.kaanbasal.net/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://www.kaanbasal.net/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://www.kaanbasal.net/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="https://www.kaanbasal.net/apple-touch-icon.png"><link rel="mask-icon" href="https://www.kaanbasal.net/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="https://www.kaanbasal.net/site.webmanifest"><link rel="canonical" href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-iii/" /><link rel="prev" href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/" /><link rel="stylesheet" href="https://www.kaanbasal.net/lib/normalize/normalize.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/css/style.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="https://www.kaanbasal.net/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "A Journey to the Firmware of ZTE H267A: Part III",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.kaanbasal.net\/posts\/a-journey-to-the-firmware-of-zte-h267a-part-iii\/"
+        },"genre": "posts","keywords": "superonline, firmware, iptables, mitm","wordcount":  741 ,
+        "url": "https:\/\/www.kaanbasal.net\/posts\/a-journey-to-the-firmware-of-zte-h267a-part-iii\/","datePublished": "2020-05-06T01:22:33+03:00","dateModified": "2020-05-06T01:22:33+03:00","author": {
+                "@type": "Person",
+                "name": "Kaan Basal"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="https://www.kaanbasal.net/" title="Kaan Basal"><span class="header-title-pre"><i class='fas fa-code-branch'></i>&nbsp;&nbsp;</span>Kaan Basal</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="https://www.kaanbasal.net/posts/"> Posts </a><a class="menu-item" href="https://www.kaanbasal.net/tags/"> Tags </a><a class="menu-item" href="https://www.kaanbasal.net/pages/about"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="https://www.kaanbasal.net/" title="Kaan Basal"><span class="header-title-pre"><i class='fas fa-code-branch'></i>&nbsp;&nbsp;</span>Kaan Basal</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="https://www.kaanbasal.net/posts/" title="">Posts</a><a class="menu-item" href="https://www.kaanbasal.net/tags/" title="">Tags</a><a class="menu-item" href="https://www.kaanbasal.net/pages/about" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><article class="page single"><h1 class="single-title animated flipInX">A Journey to the Firmware of ZTE H267A: Part III</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://www.kaanbasal.net" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Kaan Basal</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=06.05.2020>06.05.2020</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 741 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>4 min&nbsp;</div>
+        </div><div class="content" id="content"><p>Let&rsquo;s summarize all the information we have so far.</p>
+<ul>
+<li>The router makes <code>http</code> requests <code>http://acs.superonline.net:8015/cwmpWeb/WGCPEMgt</code> to get configuration server URL</li>
+<li>In the response returned, we found <code>https://acs.superonline.net/cwmpWeb/CPEMgt</code> (port 443) as configuration server URL which force router to use TLS connection</li>
+<li><code>acs.superonline.net</code> domain has another open port to use to access configuration server which is <code>8010</code></li>
+<li>We have PPPoE Server named <code>ppp0</code>, PPPoE Client named <code>ppp1</code>, and we forwarded all the packets through <code>ppp1</code> interface using <code>iptables</code></li>
+</ul>
+<p>With all these pieces of information collected, I was ready to start getting the data I needed in the first place.</p>
+<h3 id="altering-the-response">Altering the Response</h3>
+<p>As I mentioned in the previous part, I need a proxy tool to alter the response, and I chose to use Mitmproxy.
+Installed, and started it with <code>--replace</code> parameter.
+The meaning of this parameter is to filter only response bodies, if there is a matching string with the first part, replace it with the second part.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># installs the mithmproxy</span>
+$ apt install mitmproxy
+
+<span class="c1"># start it with replacements</span>
+$ mitmproxy --mode transparent --showhost --listen-port <span class="m">8080</span> --replace <span class="s2">&#34;|~bs .*|https://acs.superonline.net|http://acs.superonline.net:8010&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>And now, the only thing needed was, forwarding all the requests going to port <code>80</code>, <code>8010</code>, and <code>8015</code> to mitmproxy, so it can alter the response for us.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># forward packets going 80 to 8080</span>
+$ iptables -t nat -A PREROUTING -p tcp --dport <span class="m">80</span> -j REDIRECT --to-port <span class="m">8080</span>
+<span class="c1"># forward packets going 8010 to 8080</span>
+$ iptables -t nat -A PREROUTING -p tcp --dport <span class="m">8010</span> -j REDIRECT --to-port <span class="m">8080</span>
+<span class="c1"># forward packets going 8015 to 8080</span>
+$ iptables -t nat -A PREROUTING -p tcp --dport <span class="m">8015</span> -j REDIRECT --to-port <span class="m">8080</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="searching-for-the-root-password">Searching for the Root Password</h3>
+<p>Opened up Wireshark, started capturing the interfaces that cables connected before, and reset the router to factory settings.
+After a couple of minutes, there were lots of <code>http</code> packets going to <code>http://acs.superonline.net:8010</code>.</p>
+<div class="details admonition tip">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Wireshark Filter<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">http and ip.host == acs.superonline.net and tcp contains &ldquo;Adminuser&rdquo;</div>
+        </div>
+    </div>
+<figure><a class="lightgallery" href="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png" title="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png" data-thumbnail="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png" data-sub-html="<h2>Root Password</h2>">
+        <img
+            class="lazyload"
+            src="https://www.kaanbasal.net/svg/loading/normal.min.svg"
+            data-src="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png"
+            data-srcset="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png 1.5x, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png 2x"
+            data-sizes="auto"
+            alt="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-root-password.png" />
+    </a><figcaption class="image-caption">Root Password</figcaption>
+    </figure>
+<p>As you can see from the results, the configuration server returned the password.
+The thing is, this password is not static, it changes every time you reset your router so you have to find it again and again if you don&rsquo;t stop <strong>TR069</strong> connection.</p>
+<p>Finally, I gathered the password but whenever I reset the router, the password will be changed as well.
+To prevent that I needed to find the firmware and its original root password.</p>
+<h3 id="searching-for-the-firmware">Searching for the Firmware</h3>
+<p>We need the configuration server to tell the firmware location.
+And to do that we need configuration server to think our router has a different version than its latest version.</p>
+<p>I checked the requests and found out that, the router sends information about its hardware, software, name e.g.</p>
+<figure><a class="lightgallery" href="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png" title="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png" data-thumbnail="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png" data-sub-html="<h2>Software Version</h2>">
+        <img
+            class="lazyload"
+            src="https://www.kaanbasal.net/svg/loading/normal.min.svg"
+            data-src="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png"
+            data-srcset="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png 1.5x, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png 2x"
+            data-sizes="auto"
+            alt="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-software-version.png" />
+    </a><figcaption class="image-caption">Software Version</figcaption>
+    </figure>
+<p>So if I could replace this value in the request, I could get the firmware.
+First of all, I stopped the mitmproxy and started it with another set of parameters.
+The meaning of the newly added parameter is to filter only request bodies, if there is a matching string with the first part, replace it with the second part.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># start it with replacements</span>
+$ mitmproxy --mode transparent --showhost --listen-port <span class="m">8080</span> --replace <span class="s2">&#34;|~bs .*|https://acs.superonline.net|http://acs.superonline.net:8010&#34;</span> --replace <span class="s2">&#34;|~bq .*|V1.0.1_TRT24|V1.0.0&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition tip">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Wireshark Filter<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">http and ip.host == acs.superonline.net and tcp contains &ldquo;.bin&rdquo;</div>
+        </div>
+    </div>
+<figure><a class="lightgallery" href="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png" title="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png" data-thumbnail="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png" data-sub-html="<h2>Firmware Location</h2>">
+        <img
+            class="lazyload"
+            src="https://www.kaanbasal.net/svg/loading/normal.min.svg"
+            data-src="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png"
+            data-srcset="https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png 1.5x, https://www.kaanbasal.net/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png 2x"
+            data-sizes="auto"
+            alt="/a-journey-to-the-firmware-of-zte-h267a/wireshark-capture-firmware.png" />
+    </a><figcaption class="image-caption">Firmware Location</figcaption>
+    </figure>
+<p>As you can see from the results, the configuration server sent <strong><a href="http://acs.superonline.net:8010/firmware/zxhnh267a_hv101_fv101_trt24_firmware.bin" target="_blank" rel="noopener noreffer">the firmware location</a></strong>.</p>
+<h3 id="conclusion">Conclusion</h3>
+<div class="details admonition tip">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Root Password<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">I couldn&rsquo;t have enough time to examine the firmware itself but I&rsquo;ve got a feedback about root password.
+Even though I did not test it my self, it might be <strong>fbr_2016_SoL</strong></div>
+        </div>
+    </div>
+<p>In these blog posts, I explained all the steps to find your root password and the original firmware of the device.</p>
+<p>I also tried to capturing the original root password.
+To do that, I altered one of the responses and forced the router to send its password.
+Unfortunately, there is no password assigned to root user, and as far as I can tell without a password, UI does not let you log in.</p>
+<p>Completing all of these steps is not easy for everybody, and it takes lots of time.
+And also, there is no way to log in as <code>root</code> without doing all these steps above.
+To reduce the complexity and required time, I am planning to develop an application that shows all the information, and sets the root password without too much hassle.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 06.05.2020</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="https://www.kaanbasal.net/tags/superonline/">superonline</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/firmware/">firmware</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/iptables/">iptables</a>,&nbsp;<a href="https://www.kaanbasal.net/tags/mitm/">mitm</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="https://www.kaanbasal.net/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="https://www.kaanbasal.net/posts/a-journey-to-the-firmware-of-zte-h267a-part-ii/" class="prev" rel="prev" title="A Journey to the Firmware of ZTE H267A: Part II"><i class="fas fa-angle-left fa-fw"></i>A Journey to the Firmware of ZTE H267A: Part II</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.5"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://www.kaanbasal.net" target="_blank">Kaan Basal</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://www.kaanbasal.net/lib/lightgallery/lightgallery.min.css"><style>.lg-toolbar .lg-icon::after { color: #999; }</style><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":20},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":10,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="https://www.kaanbasal.net/js/theme.min.js"></script><script type="text/javascript">
+            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+            ga('create', 'UA-165782253-1',{ 'storage': 'none' });ga('set', 'anonymizeIp', true);ga('send', 'pageview');
+        </script><script type="text/javascript" src="https://www.google-analytics.com/analytics.js" async></script></body>
+</html>
